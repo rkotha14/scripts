@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#Check for root previlage
+if [[ "${UID}" -ne 0 ]]
+then
+	echo 'Need root previlages'
+	exit 1
+fi
+
+if [[ "$@" -lt 0 ]]
+then
+	echo 'Need a name'
+	exit 1
+fi
+
+#User Info
+uname="$1"
+shift
+comments="$*"
+#Create user
+useradd "$uname" -c "$comments"
+
+#check exit status
+if [[ "$[?]" -ne 0 ]]
+then
+	echo "User not create"
+	exit 1
+fi
+
+#Generate password
+password="$(date +%s%N | sha256sum | head -c10)"
+echo $password | passwd --stdin $uname
+
+#Check for password
+if [[ "$?" -ne 0 ]]
+then
+	echo 'Password not create'
+	exit 1
+fi
