@@ -1,0 +1,45 @@
+#!/bin/bash
+#Check for root user
+if [[ "${UID}" -ne 0 ]]
+then
+	echo "Not a superuser"
+	exit 1
+fi
+
+#Check for arguments
+if [[ "${#}" -lt 1 ]]
+then
+	echo "No arguments" > op.err
+	exit 1
+fi
+
+#Create user
+user=${1}
+shift
+comments=${@}
+useradd "${user}" -c "${comments}" 2> op.err
+
+#user creation verification
+if [[ "$?" -ne 0 ]]
+then
+	echo "User not created" >> op.err
+	exit 1
+fi
+
+#Password generation
+password="$(date +%s%N | sha256sum | head -c10)"
+
+#Password for user
+echo $password | passwd --stdin "${user}"
+
+#
+if [[ "$?" -ne 0 ]]
+then
+	echo "Password not created" >> op.err
+	exit 1
+else
+	echo "User Details"
+	echo "$user"
+	echo "$password"
+
+fi
