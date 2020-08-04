@@ -64,14 +64,13 @@ then
 	echo "GIT installation faile"
 	exit 1
 fi
-cd /opt
 wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
 if [[ "$?" -ne 0 ]]
 then
 	echo "Maven download failed"
 	exit 1
 fi
-tar -xvzf apache-maven-3.6.3-bin.tar.gz 
+tar -xvzf apache-maven-3.6.3-bin.tar.gz -C /opt/
 if [[ "$?" -ne 0 ]]
 then
 	echo "Maven extraction failed"
